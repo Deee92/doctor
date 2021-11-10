@@ -32,9 +32,9 @@ public class InputCSVProcessor {
     public static void process(String content, boolean sourceOutput) throws IOException {
         Reader in = new InputStreamReader(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
         Iterable<CSVRecord> records = csvFormat.parse(in);
+        launcher.getEnvironment().setCommentEnabled(true);
         for (CSVRecord record : records) {
             if (!record.get(FILEPATH).equals("FILEPATH")) {
-                launcher.getEnvironment().setCommentEnabled(true);
                 launcher.addInputResource(record.get(FILEPATH));
                 methodPaths.add(record.get(EXTRA_INFO).replaceAll("visibility=.+;", ""));
             }
