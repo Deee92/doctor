@@ -5,6 +5,7 @@ public enum CSVHeadersEnum {
     LOCATION,
     PARENT_TYPE,
     PARENT_LOCATION,
+    VALUE,
     FILEPATH,
     EXTRA_INFO
 }
