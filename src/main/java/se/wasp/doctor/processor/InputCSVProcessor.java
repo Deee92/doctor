@@ -14,8 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Logger;
 
-import static se.wasp.doctor.util.CSVHeadersEnum.EXTRA_INFO;
-import static se.wasp.doctor.util.CSVHeadersEnum.FILEPATH;
+import static se.wasp.doctor.util.CSVHeadersEnum.*;
 
 public class InputCSVProcessor {
     private final static Logger LOGGER = Logger.getLogger(InputCSVProcessor.class.getName());
@@ -26,6 +25,7 @@ public class InputCSVProcessor {
             .build();
 
     static List<String> methodPaths = new ArrayList<>();
+    static Map<String, String> methodLines = new LinkedHashMap<String, String>();
 
     static Launcher launcher = new Launcher();
 
@@ -34,14 +34,14 @@ public class InputCSVProcessor {
         Iterable<CSVRecord> records = csvFormat.parse(in);
         launcher.getEnvironment().setCommentEnabled(true);
         for (CSVRecord record : records) {
-            if (!record.get(FILEPATH).equals("FILEPATH")) {
-                launcher.addInputResource(record.get(FILEPATH));
-                methodPaths.add(record.get(EXTRA_INFO).replaceAll("visibility=.+;", ""));
+            if (!record.get(ABS_PATH).equals("ABS_PATH")) {
+                launcher.addInputResource(record.get(ABS_PATH));
+                methodLines.put(record.get(LINE_START), record.get(LINE_END));
             }
         }
 
         CtModel model = launcher.buildModel();
-        model.processWith(new MethodProcessor(methodPaths, sourceOutput));
+        model.processWith(new MethodProcessor(methodLines, sourceOutput));
         if (sourceOutput) {
             String outputDirectory = "./output/generated/";
             launcher.setSourceOutputDirectory(outputDirectory);

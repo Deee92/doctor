@@ -1,6 +1,7 @@
 package se.wasp.doctor.processor;
 
 import spoon.processing.AbstractProcessor;
+import spoon.reflect.cu.SourcePosition;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.reference.CtTypeReference;
@@ -10,16 +11,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class MethodProcessor extends AbstractProcessor<CtMethod<?>> {
     private final static Logger LOGGER = Logger.getLogger(MethodProcessor.class.getName());
 
     List<String> methodsToProcess;
+    Map<String, String> methodLines;
     boolean sourceOutput;
 
-    MethodProcessor(List<String> methodsToProcess, boolean sourceOutput) {
-        this.methodsToProcess = methodsToProcess;
+    MethodProcessor(Map<String, String> methodLines, boolean sourceOutput) {
+        this.methodLines = methodLines;
         this.sourceOutput = sourceOutput;
     }
 
@@ -68,7 +71,8 @@ public class MethodProcessor extends AbstractProcessor<CtMethod<?>> {
 
     @Override
     public void process(CtMethod<?> method) {
-        if (methodsToProcess.contains(method.getPath().toString())) {
+        SourcePosition position = method.getOriginalSourceFragment().getSourcePosition();
+        if (methodLines.entrySet().contains(Map.entry(position.getLine() + "", position.getEndLine() + ""))) {
             String description = stringifyMethodName(method.getSimpleName()) + "\n";
             description = description.replace("get", "Gets");
             description = description.replace("set", "Sets");
