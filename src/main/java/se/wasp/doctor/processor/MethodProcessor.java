@@ -2,6 +2,7 @@ package se.wasp.doctor.processor;
 
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.cu.SourcePosition;
+import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.reference.CtTypeReference;
@@ -107,6 +108,7 @@ public class MethodProcessor extends AbstractProcessor<CtMethod<?>> {
             LOGGER.info("Javadoc generated for " + method.getPath());
             if (!sourceOutput) {
                 System.out.println(getJavaDoc(description, author, parameters, returned, thrownExceptions));
+                InputCSVProcessor.setSourcePrinted((CtClass<?>) method.getParent());
             }
         }
     }

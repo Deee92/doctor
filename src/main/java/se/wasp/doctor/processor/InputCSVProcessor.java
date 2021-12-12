@@ -5,6 +5,7 @@ import org.apache.commons.csv.CSVRecord;
 import se.wasp.doctor.util.CSVHeadersEnum;
 import spoon.Launcher;
 import spoon.reflect.CtModel;
+import spoon.reflect.declaration.CtClass;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -18,6 +19,8 @@ import static se.wasp.doctor.util.CSVHeadersEnum.*;
 
 public class InputCSVProcessor {
     private final static Logger LOGGER = Logger.getLogger(InputCSVProcessor.class.getName());
+    private static boolean printSource = false;
+    static Set<CtClass<?>> parents = new LinkedHashSet<>();
 
     private static final CSVFormat csvFormat = CSVFormat.Builder
             .create(CSVFormat.DEFAULT)
@@ -28,6 +31,11 @@ public class InputCSVProcessor {
     static Map<String, String> methodLines = new LinkedHashMap<String, String>();
 
     static Launcher launcher = new Launcher();
+
+    public static void setSourcePrinted(CtClass<?> parent) {
+        printSource = true;
+        parents.add(parent);
+    }
 
     public static void process(String content, boolean sourceOutput) throws IOException {
         Reader in = new InputStreamReader(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
@@ -47,6 +55,9 @@ public class InputCSVProcessor {
             launcher.setSourceOutputDirectory(outputDirectory);
             launcher.prettyprint();
             LOGGER.info("Generated source output at " + outputDirectory);
+        } else if (printSource) {
+            System.out.println("=== Source file with generated documentation ===");
+            parents.forEach(ctClass -> System.out.println(ctClass.prettyprint()));
         }
     }
 }
