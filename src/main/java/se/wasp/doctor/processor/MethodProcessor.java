@@ -107,7 +107,7 @@ public class MethodProcessor extends AbstractProcessor<CtMethod<?>> {
             method.setDocComment(description + author + parameters + returned + thrownExceptions);
             LOGGER.info("Javadoc generated for " + method.getPath());
             if (!sourceOutput) {
-                System.out.println(getJavaDoc(description, author, parameters, returned, thrownExceptions));
+//                System.out.println(getJavaDoc(description, author, parameters, returned, thrownExceptions));
                 InputCSVProcessor.setSourcePrinted((CtClass<?>) method.getParent());
             }
         }
